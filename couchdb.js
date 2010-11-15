@@ -40,7 +40,7 @@ CouchDB = SC.DataSource.extend(
   // 
   retrieveRecord: function(store, storeKey) {
     var doc = store.readDataHash(storeKey);
-
+    
     SC.Request.getUrl(this.getResourcePath(doc)).json()
                       .header('Accept', 'application/json')
                       .notify(this, '_didComplete', store, storeKey)
@@ -103,9 +103,10 @@ CouchDB = SC.DataSource.extend(
       var decodedBody = this._decodedResponseBody(response);
 
       var records = decodedBody.rows.getEach('value');
+      var ids     = records.getEach('_id');
       var recordType = query.get('recordType');
       
-      store.loadRecords(recordType, records);
+      store.loadRecords(recordType, records, ids);
 
       store.dataSourceDidFetchQuery(query);
     } else {
@@ -122,7 +123,7 @@ CouchDB = SC.DataSource.extend(
       // Add _id and _rev to the doc for further server interaction.
       doc._id = decodedBody.id;
       doc._rev = decodedBody.rev;
-
+      
       store.dataSourceDidComplete(storeKey, doc, doc._id);
     } else {
       store.dataSourceDidError(storeKey);
