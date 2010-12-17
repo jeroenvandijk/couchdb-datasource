@@ -23,6 +23,22 @@ Add the following lines to your core.js file, remove other similar lines
       commitRecordsAutomatically: YES
     }).from('CouchDB')
 
+Create the CouchDB database:
+
+    curl -X PUT http://127.0.0.1:5984/sc-datasource
+    
+Add a design document to the database:
+
+    curl -X PUT http://127.0.0.1:5984/sc-datasource/_design/sc-datasource -d '{"_id": "_design/sc_datasource", "views": { "by-sc-type": { "map": "function(doc) { if (doc.sc_type) { emit(doc.sc_type, doc); } };" } } }'
+
+To test if that worked:
+
+    curl http://127.0.0.1:5984/sc-datasource/_design/sc-datasource/_view/by-sc-type
+
+This should give you the following output: 
+
+    {"total_rows":0,"offset":0,"rows":[]}
+
 Thats it.
 
 
